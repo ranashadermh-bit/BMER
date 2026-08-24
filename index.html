@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الخطّة الشجريّة التفاعليّة - الهندسة الطبية الحيوية</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Tajawal', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Tajawal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- React & Babel Framework scripts -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.8);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(71, 85, 105, 1);
+    }
+  </style>
+</head>
+<body class="bg-[#0b1120] text-slate-100 min-h-screen transition-colors duration-300">
+  <div id="root"></div>
+<script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- COURSES DATASET ---
+    const INITIAL_COURSES = [
+      // YEAR 1 - TERM 1 & TERM 2
+      {
+        id: '821006',
+        name: 'مقدمة في الهندسة',
+        hours: 1,
+        year: 1,
+        term: 1,
+        category: 'basic_eng',
+        desc: 'مقدمة شاملة في التخصصات الهندسية ومفاهيم التصميم والأخلاقيات الهندسية.',
+        prereqs: [],
+        unlocks: [{ id: '282012', note: 'سابق دراسة' }],
+        resources: {
+          notes: [
+            { title: 'سلايدات مترجمة 📄', url: 'https://drive.google.com/drive/mobile/folders/1qkKtPx76ihiv3BD-NxcT8ejyD9eQqkt9?fbclid=IwdGRjcANSIFFjbGNrA1IgTGV4dG4DYWVtAjExAAEemZX0qjr2q8gStiQ5lsxq417_XAvs0UzM6bLJbq8eUbhftfYmnF37rUb_vFY_aem_kITsSZPjp6gYjRg1GiZN5w' }
+          ],
+          exams: [
+            { title: 'سنوات 1 📚', url: 'https://drive.google.com/file/d/1MhVh11iUx0c98DSu-yQwyJAPFN-XKu6D/view?usp=drivesdk' },
+            { title: 'سنوات 2 📚', url: 'https://drive.google.com/file/d/10hsx5wV9NFZ1XcQnCjuWLON61io2mr6O/view?usp=drivesdk' },
+            { title: 'سنوات 3 📚', url: 'https://drive.google.com/file/d/1U9GKGcv67BbWM9qlq7oHlh0D6deFlbgG/view?usp=drivesdk' },
+            { title: 'سنوات 4 📚', url: 'https://drive.google.com/file/d/1skXR6wxSb8ipv0wqV4bBzdlqJWUdHm8Z/view?usp=drivesdk' },
+            { title: 'سنوات 5 📚', url: 'https://drive.google.com/file/d/1-NsPJgPevSV5B_-AdaUi760_9H9Q3n2w/view?usp=drivesdk' }
+          ]
+        }
+      },
+
+      { 
+        id: '821011', 
+        name: 'تفاضل و تكامل 101', 
+        hours: 3, 
+        year: 1, 
+        term: 1, 
+        category: 'basic_sci', 
+        desc: 'أساسيات التفاضل والتكامل والتطبيقات الرياضية.', 
+        prereqs: [], 
+        unlocks: [{ id: '821023', note: 'سابق نجاح' }],
+        resources: {
+          notes: [
+            { title: 'الكتاب 📚', url: 'https://drive.google.com/file/d/0B5RgP8fETF-_Yzdkc0hVMDBEU00/view?usp=drivesdk&resourcekey=0-BMfA9zQd5PgVP-HhsSxGLw' },
+            { title: 'المانيوال 📘', url: 'https://drive.google.com/file/d/0B5RgP8fETF-_elJMY2tBaW9VM1E/view?usp=drivesdk&resourcekey=0-HzFD8wPmAxfHPPheltDmMQ' },
+            { title: 'شرح لمادة الفيرست (رابط القناة)', url: 'https://bit.ly/Calculus1-Tasharuk' },
+            { title: 'رابط الدرايف الشامل 📁', url: 'https://bit.ly/Calculus1-Tasharuk' },
+            { title: 'تفريغ رنا شادرمه 📝', url: 'https://drive.google.com/file/d/1E9IA-_PCM9EO75tPiBUSX2GsJTSTuLPb/view?usp=drivesdk' }
+          ],
+          videos: [
+            { title: 'شرح الدكتور عبداللطيف الله يرحمه 🎥', url: 'https://youtube.com/playlist?list=PL8PqiXhu9aUoL3i2MwTSYi33gtIMAykUp&si=3AOgEEg64phykLz6' },
+            { title: 'شرح المهندس ليث العمري 🎥', url: 'https://youtube.com/playlist?list=PLEt2IkxYfcu6DGhsrfLww21oBoRkDHqht&si=qyRDwSYpQDXR6oFa' },
+            { title: 'شرح البروف ليونارد 🎥', url: 'https://youtube.com/playlist?list=PLF797E961509B4EB5&si=FzEOtxkM-Q7nVPJl' }
+          ],
+          exams: [
+            { title: 'أسئلة فيرست 📚', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_U3FZeWgwLUE5SjA?resourcekey=0-Txnz-nzDOa3KmFdYMNx44w' },
+            { title: 'أسئلة سكند 📚', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_MDMyQ2d0Q24zNHM?resourcekey=0-ZIp-V_YNVMVEH4rCLbzsHQ' },
+            { title: 'أسئلة فاينال 📚', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_aVVQUkdEX091WDQ?resourcekey=0-mQj-4CsC-aJd4qQ2eCF28g' }
+          ]
+        }
+      },
+
+      {
+        id: '821015',
+        name: 'كيمياء عامه101',
+        hours: 3,
+        year: 1,
+        term: 1,
+        category: 'basic_sci',
+        desc: 'مبادئ الكيمياء العامة والتركيب الذري والجدول الدوري والتفاعلات الكيميائية.',
+        prereqs: [],
+        unlocks: [
+          { id: '821025', note: 'متطلب سابق' },
+          { id: '821070', note: 'سابق أو متزامن' }
+        ],
+        resources: {
+          notes: [
+            { title: 'الكتاب 📚', url: 'https://drive.google.com/drive/folders/1kio4BSxtsXDr69xFB5XwnODa2XE1fIr1' },
+            { title: 'سلايدات واسئلة الدكتور أيمن عمرات 📘', url: 'https://drive.google.com/drive/folders/1jm7xNKKqyPCOPNstXVyCW7cny2OX0jnb' },
+            { title: 'سلايدات كيمياء 📄', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_OVVwaXJNa3piX28?resourcekey=0-64KaKx790gOvJ1EpWE547g' },
+            { title: 'شرح ياسمين الدرابسة 📝', url: 'https://drive.google.com/drive/folders/11CTtJ5ASTrn5FU52aIlU_D2Q0rmXvnol' }
+          ],
+          videos: [
+            { title: 'فيديوهات الدكتور محمد فارس 🎥', url: 'https://youtube.com/playlist?list=PLKeyUxeHsYO-Ho3g4u6c78nAt4SiBJej2&si=D5m9ZzKVcdqga963' },
+            { title: 'شرح لأسامة أبو عوض 🎥', url: 'https://youtube.com/playlist?list=PLK2Wj1l4quZDR8zBxNgWOpIij3CvqAai_&si=7sKjMPmlAdIRyvbW' },
+            { title: 'شرح كرم (جروب الفيسبوك الشامل) 👥', url: 'https://www.facebook.com/groups/8949446705127367/?ref=share&mibextid=NSMWBT' }
+          ],
+          exams: [
+            { title: 'أسئلة سنوات كيمياء 101 📚', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_emVpU2M3cnk1RHc?resourcekey=0-vyS6f-rEp8MEfNDmmZv2Aw' }
+          ]
+        }
+      },
+
+      {
+        id: '821016',
+        name: 'فيزياء عامه101',
+        hours: 3,
+        year: 1,
+        term: 1,
+        category: 'basic_sci',
+        desc: 'الميكانيكا التقليدية، قوانين نيوتن للمحتوى والمظاهر الحركية والطاقة والزخم.',
+        prereqs: [],
+        unlocks: [
+          { id: '821024', note: 'متطلب سابق' },
+          { id: '821072', note: 'سابق أو متزامن' },
+          { id: '283410', note: 'متطلب سابق' },
+          { id: '283420', note: 'متطلب سابق' }
+        ],
+        resources: {
+          notes: [
+            { title: 'الكتاب والمانيوال 📚', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_cExYQUVXNVNZRTg?resourcekey=0--3YfYO0bNBIra52KTwmGfg' },
+            { title: 'سلايدات الدكتور معن غرايبة 📘', url: 'https://drive.google.com/drive/folders/1wOAP7cDlZOPoLwZFgx71YoD7zoTJd9D1' },
+            { title: 'شرح أحمد العزام 📝', url: 'https://drive.google.com/drive/folders/1BCie5hc_2WNUubdI1a7kuGZurSymTw6I' },
+            { title: 'سلايدات د.عماد و د.محمود 📄', url: 'https://drive.google.com/drive/folders/1-cOvbc_DZzMQszO4foMq_xZWuwIuhYTP' },
+            { title: 'دفاتر للاستزادة 📑', url: 'https://drive.google.com/drive/folders/1Sr8Jr3Kz2UDhVHbD4nCKOnqLnPjnA1hV' },
+            { title: 'شرح القرعان 📖', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_X29uR3lZVkQ3bE0?resourcekey=0-WtSgXIaXdIC4CXvkrAQ5WQ' },
+            { title: 'تلخيص رنا شادرمه 📝', url: 'https://drive.google.com/file/d/10cCVT2fTFk6iEG6QBb1t5Z09KRKIX0-K/view?usp=drivesdk' }
+          ],
+          videos: [
+            { title: 'شرح لجنة الهندسة الميكانيكية 🎥', url: 'https://youtube.com/playlist?list=PLMyLvwdh-XVzACVxynzNV9GTSPsbo7seD&si=CwbUPpDvEHMpSuQR' },
+            { title: 'شرح قناة afkar academy 🎥', url: 'https://youtube.com/playlist?list=PLWrUU7ljKR0RzX_CTA4cmjVrcqUj0ocD5&si=p2Oa5I9qcZeytoDs' },
+            { title: 'خالد فيزكس 🎥', url: 'https://youtube.com/playlist?list=PLZ0T_ivlaIL_1CPfxCOx1-Br917Qg5t6r&si=tDTYkcu4GqSzmo-4' }
+          ],
+          exams: [
+            { title: 'أسئلة سنوات فيزياء 101 📚', url: 'https://drive.google.com/drive/folders/0B5RgP8fETF-_VENBMDFSdjJpUEU?resourcekey=0-wGwdwhgWajQe3enfKBQVcw' }
+          ]
+        }
+      },
+
+      { 
+        id: '822003', 
+        name: 'الرسم الهندسي', 
+        hours: 1, 
+        year: 1, 
+        term: 1, 
+        category: 'basic_eng', 
+        desc: 'مبادئ الرسم الهندسي والتمثيل الفراغي وإسقاط الأشكال الهندسيّة.', 
+        prereqs: [], 
+        unlocks: [] 
+      },
+
+      { 
+        id: '801022', 
+        name: 'اللغه العربية', 
+        hours: 3, 
+        year: 1, 
+        term: 1, 
+        category: 'uni_req', 
+        desc: 'مهارات التواصل باللغة العربية والتعبير والتحليل اللغوي والأدبي.', 
+        prereqs: [], 
+        unlocks: [],
+        resources: {
+          notes: [
+            { title: 'الدرايف الشامل 📁', url: 'https://drive.google.com/drive/folders/10Am_mKsIMrV2ZnDs_ZzmHngeMszMY-_8' }
+          ],
+          videos: [
+             { title: 'قناة تشارك 📢', url: 'https://t.me/Tasharuk_Arabic' },
+             { title: 'شرح المادة 🎥', url: 'https://youtube.com/playlist?list=PLN1qrcCOi64Wnqy3ShOkBPjkZjtNFXWSq&si=RM-QMTUsqEb1-QC7' }
+          ]
+        }
+      },
+      
+      { 
+        id: '821192', 
+        name: 'الريادة والابتكار', 
+        hours: 2, 
+        year: 1, 
+        term: 1, 
+        category: 'uni_req', 
+        desc: 'مفاهيم الريادة والابتكار وتطوير نماذج الأعمال والحلول التكنولوجية الريادية.', 
+        prereqs: [], 
+        unlocks: [],
+        resources: {
+          notes: [
+            { title: 'تفاريغ مادة الميد (الجزء 1) 📄', url: 'https://t.me/Tasharuk_Entrepreneurship/136' },
+            { title: 'تفاريغ مادة الميد (الجزء 2) 📄', url: 'https://t.me/Tasharuk_Entrepreneurship/137' },
+            { title: 'التشابتر الثالث 📘', url: 'https://drive.google.com/file/d/1VO0QzyO547Mzn8n-PMoAuH7GnF6muc2S/view?usp=drivesdk' },
+            { title: 'التشابتر الرابع 📘', url: 'https://drive.google.com/file/d/1OcBAjYvXuCUCZJigBOAZUEfwfM6UEx54/view?usp=drivesdk' },
+            { title: 'الدرايف الشامل 📁', url: 'https://bit.ly/Tasharuk_ENTREPRENEURSHIP' }
+          ],
+          videos: [
+            { title: 'قناةتشارك  📢', url: 'https://t.me/Tasharuk_Entrepreneurship' },
+            { title: 'فيديوهات شرح للمادة (1) 🎥', url: 'https://youtu.be/9vOdwZEbE3I?si=fSO3w21Q8WjDRbu3' },
+            { title: 'فيديوهات شرح للمادة (2) 🎥', url: 'https://youtu.be/rlfKU26kIfY?si=YDeQQGurLgfCg24y' }
+            
+          ],
+          exams: [
+            { title: 'أسئلة سنوات - شابتر 1 📚', url: 'https://drive.google.com/file/d/1vzOqIwnfVI8dyq1efh4MQGHlH6zE2aMc/view?usp=drive_link' },
+            { title: 'أسئلة سنوات - شابتر 2 📚', url: 'https://drive.google.com/file/d/1quNqI5OQEv3BoT2J_wy4TW14022nbAMc/view?usp=drive_link' },
+            { title: 'أسئلة سنوات - شابتر 3+4 📚', url: 'https://drive.google.com/file/d/131bfJDEKNHsq5SejB_TG8KBX8MgkoagQ/view?usp=drive_link' }
+          ]
+        }
+      },
+
+      { 
+        id: '821005', 
+        name: 'مشاغل هندسية', 
+        hours: 1, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_eng', 
+        desc: 'تطبيقات عملية على أعمال الصيانة والتشغيل والورش الهندسية الأساسية.', 
+        prereqs: [], 
+        unlocks: [] 
+      },
+
+       { 
+        id: '821023', 
+        name: 'تفاضل وتكامل 102', 
+        hours: 3, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_sci', 
+        desc: 'تقنيات التكامل، المتتاليات والمتسلسلات وتطبيقات التفاضل والتكامل المتقدمة.', 
+        prereqs: [{ id: '821011', note: 'سابق نجاح' }], 
+        unlocks: [
+          { id: '822010', note: 'سابق نجاح' },
+          { id: '822030', note: 'سابق نجاح' },
+          { id: '282020', note: 'سابق دراسة' }
+        ] 
+      },
+
+      { 
+        id: '821024', 
+        name: 'فيزياء عامه 102', 
+        hours: 3, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_sci', 
+        desc: 'الكهرباء والمغناطيسية والدوائر الكهربائية والمجالات الكهرومغناطيسية.', 
+        prereqs: [{ id: '821016', note: 'متطلب سابق' }], 
+        unlocks: [{ id: '282120', note: 'متطلب سابق' }] 
+      },
+
+      { 
+        id: '821025', 
+        name: 'كيمياء عامه 102', 
+        hours: 3, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_sci', 
+        desc: 'الاتزان الكيميائي، الديناميكا الحرارية الكيميائية والحركية التفاعلية.', 
+        prereqs: [{ id: '821015', note: 'متطلب سابق' }], 
+        unlocks: [
+          { id: '822170', note: 'متطلب سابق' },
+          { id: '283440', note: 'متطلب سابق' }
+        ] 
+      },
+
+      { 
+        id: '821070', 
+        name: 'كيمياء عامه عمليه', 
+        hours: 1, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_sci', 
+        desc: 'تجارب مخبرية في الكيمياء العامة والتحليل الحجمي والتفاعلات الكيميائية.', 
+        prereqs: [{ id: '821015', note: 'سابق أو متزامن' }], 
+        unlocks: [] 
+      },
+
+      { 
+        id: '821072', 
+        name: 'فيزياء عامه عملي', 
+        hours: 1, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_sci', 
+        desc: 'تجارب مخبرية ودراسة القياسات الفيزيائية والميكانيكا والكهرباء.', 
+        prereqs: [{ id: '821016', note: 'سابق أو متزامن' }], 
+        unlocks: [] 
+      },
+
+      { 
+        id: '821143', 
+        name: 'البرمجة في علوم الذكاء الاصطناعي', 
+        hours: 2, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_eng', 
+        desc: 'أساسيات البرمجة بلغة بايثون وتطبيقاتها في خوارزميات الذكاء الاصطناعي.', 
+        prereqs: [], 
+        unlocks: [
+          { id: '821152', note: 'متزامن' },
+          { id: '282300', note: 'متطلب سابق' }
+        ] 
+      },
+
+      { 
+        id: '821152', 
+        name: 'مختبر البرمجة في علوم الذكاء الإصطناعي', 
+        hours: 1, 
+        year: 1, 
+        term: 2, 
+        category: 'basic_eng', 
+        desc: 'تطبيقات مخبرية وبرمجية عملية على مادة البرمجة.', 
+        prereqs: [{ id: '821143', note: 'متزامن' }], 
+        unlocks: [] 
+      },
+
+      // YEAR 2 - TERM 1
+      { 
+        id: '282012', 
+        name: 'الذكاء الاصطناعي في الهندسة الطبية الحيوية', 
+        hours: 2, 
+        year: 2, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'تتناول هذه المادة المبادئ الأساسية في الهندسة الطبية الحيوية والتطبيقات العملية المرتبطة بها في سوق العمل والأبحاث الحديثة.', 
+        prereqs: [{ id: '821006', note: 'سابق دراسة' }], 
+        unlocks: [{ id: '284660', note: 'سابق نجاح' }] 
+      },
+
+      { 
+        id: '821033', 
+        name: 'بيولوجيا عامه', 
+        hours: 3, 
+        year: 2, 
+        term: 1, 
+        category: 'basic_sci', 
+        desc: 'دراسة الخلية والوراثة والعمليات الحيوية الأساسية في الكائنات الحية.', 
+        prereqs: [], 
+        unlocks: [
+          { id: '821071', note: 'سابق أو متزامن' },
+          { id: '822620', note: 'متطلب سابق' }
+        ],
+        resources: {
+          notes: [
+            { title: 'تفريغ لجنة كلية الصيدلة 📝', url: 'https://bit.ly/3DFRe11' },
+            { title: 'سلايدات الدكاترة 📘', url: 'https://cutt.us/nNy9N' },
+            { title: 'سلايدات (مترجم) 📄', url: 'https://cutt.us/YsGeo' },
+            { title: 'تفريغ وشروحات متنوعة 📁', url: 'https://drive.google.com/drive/folders/1zdVgMy_UWgqPnfGj052x0PdChJgpHmQz' },
+            { title: 'شرح لجنة الطب البشري 📖', url: 'https://bit.ly/3DGrIJ3' },
+            { title: 'تلاخيص د.طارق 📝', url: 'https://cutt.us/W92F2' },
+            { title: 'شرح قصور 📖', url: 'https://bit.ly/3ybphNm' },
+            { title: 'شرح way to 100 📘', url: 'https://cutt.us/1xJyZ' },
+            { title: 'ملاحظات من محاضرات الدكاترة 📝', url: 'https://bit.ly/3EifyHS' }
+          ],
+          videos: [
+            { title: 'ريكوردات دكتور رامي 🎙️', url: 'https://cutt.us/ELdZX' },
+            { title: 'لجنة الطب البشري 🎥', url: 'https://www.youtube.com/watch?v=PIGXvfTkh6g&list=PLePhmyAbDqtf08r3N0qa-uw8eQhbG6pfB' }
+          ],
+          exams: [
+            { title: 'Test Bank 📚', url: 'https://drive.google.com/drive/folders/1RQY636Mot6HvpF6tNWxCZc0Ifuv4Xr9J' },
+            { title: 'مكملات د.فايز الزعبي 📝', url: 'https://bit.ly/3dzNBiw' },
+            { title: 'مكملات way to 100 📝', url: 'https://cutt.us/KrUDo' },
+            { title: 'مكملات لجنة الطب البشري 📝', url: 'https://cutt.us/Xnt3I' },
+            { title: 'مكملات د.طارق 📝', url: 'https://cutt.us/CbY1l__' },
+            { title: 'مجموعة أسئلة سنوات (1) 📚', url: 'https://drive.google.com/file/d/1ckJCbJumbavdW8mq0RirjhS5g2fwGfGp/view?usp=drivesdk' },
+            { title: 'مجموعة أسئلة سنوات (2) 📚', url: 'https://drive.google.com/file/d/1I68eJqrOaExlZudFJ4i2JsqBj6OcvkBB/view?usp=drivesdk' },
+            { title: 'اسئلة سنوات سابقة مهم جدًا (1) 📚', url: 'https://bit.ly/3EI24F4' },
+            { title: 'اسئلة سنوات سابقة مهم جدًا (2) 📚', url: 'https://bit.ly/3ECMZEG' },
+            { title: 'مكملات 📁', url: 'https://drive.google.com/drive/folders/1-EVwF5hHRsisI3uCIpmA0CyM7JTPqw07' }
+          ]
+        }
+      },
+
+      { id: '821071', name: 'بيولوجيا عامه عملي', hours: 1, year: 2, term: 1, category: 'basic_sci', desc: 'تجارب مخبرية ودراسات مجهرية للأنسجة والخلايا.', prereqs: [{ id: '821033', note: 'سابق أو متزامن' }], unlocks: [{ id: '102364', note: 'متطلب سابق' }] },
+      { 
+        id: '822010', 
+        name: 'تحليل وسيط', 
+        hours: 3, 
+        year: 2, 
+        term: 1, 
+        category: 'basic_sci', 
+        desc: 'التفاضل والتكامل المتعدد المتغيرات والناقلات والهندسة التحليلية.', 
+        prereqs: [{ id: '821023', note: 'سابق نجاح' }], 
+        unlocks: [
+          { id: '282040', note: 'متطلب سابق' },
+          { id: '821322', note: 'متطلب سابق' }
+        ],
+        resources: {
+          notes: [
+            { title: 'تلخيص جمان 📝', url: 'https://drive.google.com/drive/folders/1vbZlYQ4WTzGM9elwMLFQ_Usdc4Er1n4T' },
+            { title: 'ملخص قوانين 📘', url: 'https://drive.google.com/file/d/1WM6jMEaCU9FQwVZqbCzTvMxWS6D4ksUv/view?usp=drivesdk' },
+            { title: 'شرح الدكتور عبداللطيف ورقي 📝', url: 'https://drive.google.com/drive/folders/10mOK6gku0jlAev1eIG5nYZDF_LwLImrN' }
+          ],
+          videos: [
+            { title: 'شرح الدكتور عبداللطيف 🎥', url: 'https://m.youtube.com/channel/UC_jdF3SpVVct2QbWuCh8JOg' },
+            { title: 'شرح الدكتور محمد الدولات 🎥', url: 'https://youtube.com/playlist?list=PLiVkRfZtt1RW_KdiSTI4fJTbHH-J5FSUv&si=srR6eliiz3GrsrF3' },
+            { title: 'شرح معاذ العجلوني 🎥', url: 'https://youtube.com/playlist?list=PLMyLvwdh-XVyNKzpN6SC-OVzjX3xKtvwM' }
+          ],
+          exams: [
+            { title: 'دفتر سنوات سابقه للدكتور محمد الدولات (فيرست وسكند) 📚', url: 'https://drive.google.com/drive/mobile/folders/1IBLgFDpLPngvKXKdLanO9rOuMYbWJUZg/1-8cSTjvOsbxzNnkk-yp6koLxHlm1lnUV?sort=13&direction=a' }
+          ]
+        }
+      },
+
+
+      { 
+        id: '822030', 
+        name: 'معادلات تفاضليه عاديه', 
+        hours: 3, 
+        year: 2, 
+        term: 1, 
+        category: 'basic_sci', 
+        desc: 'حل المعادلات التفاضلية من الرتب الأولى والأعلى وتحويلات لابلاس.', 
+        prereqs: [{ id: '821023', note: 'سابق نجاح' }], 
+        unlocks: [
+          { id: '282120', note: 'سابق دراسة' },
+          { id: '283022', note: 'سابق دراسة' },
+          { id: '283410', note: 'سابق دراسة' },
+          { id: '283420', note: 'سابق دراسة' },
+          { id: '283440', note: 'سابق دراسة' }
+        ],
+        resources: {
+          notes: [
+            { title: 'الكتاب 📚', url: 'https://drive.google.com/file/d/13eydUBxBS-5fLN4ehO-NbMu8samUp4zi/view?usp=drivesdk' },
+            { title: 'شرح د.عبداللطيف ورقي 📝', url: 'https://drive.google.com/drive/folders/1h-NRTOiUxr92SwUnUfwBtkOBjK8luR1l' },
+            { title: 'تفاريغ وشروحات متنوعة 📁', url: 'https://drive.google.com/drive/folders/1hi9nZn8xQGX0DX6a2Q3kN9eAbhLATEeK' }
+          ],
+          videos: [
+            { title: 'فيديوهات دكتور عبد اللطيف (رحمه الله) 🎥', url: 'https://youtube.com/playlist?list=PLp1pnSnaaByKop5r1vuDkmHpzszdPomJQ' }
+          ],
+          exams: [
+            { title: 'سنوات شاملة 📚', url: 'https://drive.google.com/drive/mobile/folders/1Z-OzpzI1qk51_yuOFS_i7468FmKtR1a_/1ix9YlhSsoGb9kv_LM1xBj1peGffPXGKi?fbclid=IwdGRjcATlrLtjbGNrBOWsg3Bkb2YBZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMzUwNjg1NTMxNzI4AAEe-uv2nlYSAqopWjWVVukSGxE2-ElvD-e7reiMnBNaXOKFEtxyBB4lT7V4NPk_aem_dPvVpe4YplUcZEKFoMlPrQ&sort=13&direction=a' },
+            { title: 'الفورم الأول 📝', url: 'https://drive.google.com/file/d/18fxtZZOR8o23FJqSV5oAAgXEUzY4OQVv/view?usp=drivesdk' },
+            { title: 'الفورم الثاني 📝', url: 'https://drive.google.com/file/d/1T21szeLYpsgFc6uj1zL0TUSQnajzhjY5/view?usp=drivesdk' },
+            { title: 'الفورم الثالث 📝', url: 'https://drive.google.com/file/d/1LcsTyQEYrzOwi2OM045TbWC3ITO51NkC/view?usp=drivesdk' },
+            { title: 'الفورم الرابع 📝', url: 'https://drive.google.com/file/d/1rhsx7l-Tpg4cYBCVR2Dgx7fbqGbFLk8Z/view?usp=drivesdk' },
+            { title: 'الفورم الخامس 📝', url: 'https://drive.google.com/file/d/1CEU38gNxS9K77uYKxvf6VehtVm5UzgO7/view?usp=drivesdk' },
+            { title: 'الفورم السادس 📝', url: 'https://drive.google.com/file/d/1DrWdFAVmeR1SEzKs27uUyIgtnW4eGzPz/view?usp=drivesdk' },
+            { title: 'الفورم السابع 📝', url: 'https://drive.google.com/file/d/1Rc9hztIorOzxluE5CKnXoT218PXbsdzj/view?usp=drivesdk' }
+          ]
+        }
+      },
+      { id: '2511010', name: 'اللغة الانجليزية 101',  
+       hours: 3, year: 2, term: 1, category: 'uni_req', 
+       desc: 'تطوير المهارات الأكاديمية واللغوية باللغة الإنجليزية.', prereqs: [], unlocks: [],
+      resources: {
+        notes: [
+          { title: 'الدرايف الشامل', url: 'https://drive.google.com/drive/folders/103lBaX9k4V31eztZI9i_PqoUjzq3-4Rd' }
+        ],
+        videos: [
+          { title: 'قناة تشارك 📢', url: 'https://t.me/Tasharuk_English101' }
+        ]
+      }
+      },
+      
+      { id: '841000', name: 'العلوم العسكرية', 
+      hours: 3, year: 2, term: 1, category: 'uni_req',
+      desc: 'تاريخ القوات المسلحة والأمن القومي الأردني.', prereqs: [], unlocks: [],
+      resources: {
+        notes: [
+          { title: 'الدرايف الشامل', url: 'https://drive.google.com/drive/folders/10s3IuGxSgfOzX1NDT1iUwANykC4iFgBp' }
+        ],
+        videos: [
+          { title: ' قناة تشارك 📢', url: 'https://t.me/Tasharuk_Military' }
+        ]
+      }
+      },
+
+      // YEAR 2 - TERM 2
+      { 
+        id: '102364', 
+        name: 'وظائف الاعضاء والتشريح', 
+        hours: 4, 
+        year: 2, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'تشريح جسم الإنسان ودراسة أجهزة الجسم المختلفة وخصائصها الفسيولوجية.', 
+        prereqs: [{ id: '821071', note: 'متطلب سابق' }], 
+        unlocks: [
+          { id: '102365', note: 'سابق أو متزامن' },
+          { id: '284110', note: 'سابق دراسة' },
+          { id: '284411', note: 'سابق دراسة' },
+          { id: '284660', note: 'سابق دراسة' }
+        ],
+        resources: {
+          notes: [
+            { title: ' تفاريغ وشروحات', url: 'https://drive.google.com/drive/folders/1V0tz33Dt4SNbKoL858mk9iGSvEqn0AU1' },
+            { title: 'تفاريغ الطالب محمد', url: 'https://drive.google.com/drive/folders/1evcLgL4g824S5xcwoXgjgQEGE787QFHr' },
+            { title: 'سلايدات', url: 'https://drive.google.com/drive/folders/166D4C1UyYwznCSMixKAC9cq_W9TYBz_u' }
+          ],
+          videos: [
+            { title: ' قناه تحتوي على فيديوهات +سنوات', url: ' https://t.me/+_t-Z400g2N04ZjE0' }
+          ],
+          exams: [
+            { title: 'سنوات شامله ', url: 'https://drive.google.com/file/d/1XlAoyLVO0znSJBqFC656rVldwTBRbBCE/view?fbclid=IwZXh0bgNhZW0CMTEAAR2P8iAT8bzcQPIdKmQucI1EotfkXXODjJgKumzhYT_MEQIo9tGr8qMMxfc_aem_AahV4sBVdC7qrpwWZ8_paQTMcznmtHAI02T6Fcnm7NglF92bql7TVvi0wLckVTvK9cZ8GJokizRz_BXbFWk5eJJv' }
+          ]
+        }
+      },
+
+      { id: '102365', name: 'مختبر وظائف الأعضاء والتشريح',
+       hours: 1, year: 2, term: 2, category: 'dept_req', 
+       desc: 'تطبيقات مخبرية وعينات تشريحية حية لقياس الوظائف الحيوية.',
+        prereqs: [{ id: '102364', note: 'سابق أو متزامن' }], unlocks: [] },
+      
+      { id: '282020', name: 'الاقتصاد والادارة الهندسية',
+      hours: 2, year: 2, term: 2, category: 'dept_req',
+       desc: 'مبادئ الاقتصاد الهندسي وإدارة المشاريع وجدوى الاستثمار.',
+        prereqs: [{ id: '821023', note: 'سابق دراسة' }], unlocks: [],
+       resources: {
+          notes: [
+            { title: 'الكتاب والمانيوال', url: 'https://drive.google.com/drive/folders/1YA2n8Yi5CTrbiJMlfRKuaWvW0qtVIGdO' },
+            { title: 'شرح المهندس عبد العزيز ', url: 'https://drive.google.com/drive/folders/1ERdUlj57PxEHILprnSB2JD9EGX1ydf8i' },
+            { title: 'شرح يحيى البستنجي', url: 'https://drive.google.com/drive/folders/145H2E1knhNQqkPCjJb0ItkbtOAiBFFno' },
+            { title: 'Appendix', url: 'https://drive.google.com/file/d/1K1r3NC5S4zOxJCi1WSLwhXxs1RjaDY05/view?usp=drivesdk' }
+          ],
+          videos: [
+            { title: ' شرح من البوليتكنيك', url: 'https://youtu.be/vlKY5DZLsSQ' },
+            { title: 'شرح محمود من الكيماوي ', url: 'https://www.youtube.com/playlist?list=PL8PqiXhu9aUqCyRm3gCskEDqdq6s1wAB1' }
+          ],
+          exams: [
+            { title: 'سنوات مع حلول ', url: 'https://drive.google.com/folderview?id=16-kEk3fyQqPyvtMJZnUIba6refEP1ykj' }
+          ]
+        }
+         },
+
+
+      { 
+        id: '282040', 
+        name: 'مقدمة في الانظمة الخطية', 
+        hours: 3, 
+        year: 2, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'تمثيل الإشارات والأنظمة الخطية المستمرة والمتقطعة واستجابة التردد.', 
+        prereqs: [{ id: '822010', note: 'متطلب سابق' }], 
+        unlocks: [{ id: '283212', note: 'سابق دراسة' }],
+        resources: {
+          notes: [
+            { title: 'الكتاب 📚', url: 'https://drive.google.com/file/d/1AESJliHRyFI0edeeOyDroTVpQKMp7JIS/view?usp=drivesdk' },
+            { title: 'المانيوال', url: 'https://drive.google.com/file/d/1knXpEnBFNPUSdTfgZ_ts8aiYmSfHreVv/view?usp=drivesdk' },
+            { title: 'تفريغ رنا شادرمه للدكتوره إيناس ', url: 'https://drive.google.com/file/d/1-LYe8hh4O_Wk2E5lUG8jcQz9ErYMm8zS/view?usp=drivesdk' },
+            { title: 'شرح المهندسة لمياء للدكتور رباح ', url: 'https://drive.google.com/file/d/1LBuoejixc93BNttGW7i1raomLJRHwoaa/view?usp=drivesdk' },
+            { title: 'شروحات اخرى', url: 'https://drive.google.com/drive/folders/1XKDxV6PskHP7_h9PatgAxhaTT1qZTtwz' }
+          ],
+          videos: [
+            { title: 'شرح الدكتورة إيناس ', url: 'https://drive.google.com/drive/folders/1BcINwAY-11_m_p03hp0baHwaVsFVLsUW' }
+          ],
+        }
+      },
+
+
+      { 
+        id: '282120', 
+        name: 'تحليل الدوائر الكهربائية', 
+        hours: 3, 
+        year: 2, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'تحليل دوائر التيار المستمر والمتردد والمحولات والأنظمة ثلاثية الطور.', 
+        prereqs: [
+          { id: '821024', note: 'متطلب سابق' },
+          { id: '822030', note: 'سابق دراسة' }
+        ], 
+        unlocks: [
+          { id: '283110', note: 'سابق نجاح' },
+          { id: '283130', note: 'سابق نجاح' }
+        ],
+        resources: {
+          notes: [
+            { title: 'الكتاب والمانيوال', url: 'https://drive.google.com/drive/folders/1lNriPDzqui96wOxcCNlhO_Zo_eOC4caK' },
+            { title: 'دوسيةالنجاح', url: 'https://drive.google.com/file/d/1_Jvx_9vrv_qvwsGmog7MPFSL7VHQVhUb/view?usp=drivesdk' },
+            { title: 'تفاريغ وشروحات متنوعة 📁', url: 'https://drive.google.com/drive/folders/1CoXAbs-_xn8EDQM92HgjIG_ioDHmNRCM' }
+          ],
+          videos: [
+            { title: 'شرح المصري 🎥', url: 'https://youtube.com/@fundamentalsofelectriccirc8830?si=Wxbj7QkFsLZyny0L' },
+            { title: 'شرح المهند لؤي🎥', url: 'https://drive.google.com/drive/folders/1Gl_J9bJtmNzFTKIHVAs3hPgJ541AKfy8?fbclid=IwZXh0bgNhZW0CMTAAAR1bf2EhtnKKIiYHQ6tuLyt_n_JuHfcLl2q4CrPxzYoOkB4OOHvqxnesf08_aem_mw7VBON838vHSQ8yQY4bXQ' },
+            { title: 'شرح مسجل 1🎥', url: 'https://www.youtube.com/playlist?list=PLNBj23z192s-4nPfxC8jTxyayuuJRyTGz' },
+            { title: 'شرح مسجل 2🎥', url: 'https://www.youtube.com/playlist?list=PLFM6wDAJoh--qm9UD3VatCBeGJaPGlLK6' },
+            { title: 'شرح محمد سلهب🎥', url: 'https://m.youtube.com/playlist?list=PLbqfKrQqH_uCuXerPGzCfRWgzY7czzlFB' },
+            { title: 'شرح زاهي حداد 🎥', url: 'https://www.youtube.com/channel/UCkO6DkRPAjOtWMmi2N1Ct6A?app=desktop' },
+          ],
+        } 
+      },
+
+
+      { 
+        id: '282300', 
+        name: 'الوسائل للمهندسين الطبيين الحيويين', 
+        hours: 1, 
+        year: 2, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'استخدام أدوات المحاكاة والبرمجيات المتخصصة في الهندسة الطبية.', 
+        prereqs: [{ id: '821143', note: 'متطلب سابق' }], 
+        unlocks: [
+          { id: '283022', note: 'متطلب سابق' },
+          { id: '284310', note: 'متطلب سابق' },
+          { id: '284330', note: 'متطلب سابق' },
+          { id: '284620', note: 'متطلب سابق' },
+          { id: '284640', note: 'متطلب سابق' }
+        ] 
+      },
+
+
+      { 
+        id: '822170', 
+        name: 'كيمياء عضوية', 
+        hours: 3, 
+        year: 2, 
+        term: 2, 
+        category: 'basic_sci', 
+        desc: 'دراسة المركبات الكربوكسيلية والهيدروكربونية والروابط العضوية.', 
+        prereqs: [{ id: '821025', note: 'متطلب سابق' }], 
+        unlocks: [{ id: '822620', note: 'متطلب سابق' }] 
+      },
+
+      // YEAR 3 - TERM 1
+      { 
+        id: '283110', 
+        name: 'مختبر الدوائر الكهربائية', 
+        hours: 1, 
+        year: 3, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'تطبيقات عملية على أجهزة القياس وتحليل الدوائر الكهربائية.', 
+        prereqs: [{ id: '282120', note: 'سابق نجاح' }], 
+        unlocks: [
+          { id: '283160', note: 'متطلب سابق' },
+          { id: '284600', note: 'متطلب سابق' }
+        ] 
+      },
+      { 
+        id: '283130', 
+        name: 'الإلكترونيات الطبية 1', 
+        hours: 3, 
+        year: 3, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'الثنائيات والترانزستورات والمكبرات التشغيلية وتطبيقاتها في الأجهزة الطبية.', 
+        prereqs: [{ id: '282120', note: 'سابق نجاح' }], 
+        unlocks: [
+          { id: '283140', note: 'سابق دراسة' },
+          { id: '283160', note: 'سابق دراسة' }
+        ] ,
+        resources: {
+          notes: [
+            { title: 'الكتاب', url: 'https://drive.google.com/file/d/1Jdg-o7KqpsFYSCi-cGcvcwFlYPGF-QFH/view?usp=drivesdk' },
+            { title: 'المانيوال', url: 'https://drive.google.com/file/d/1Z7JZFYOU0aKNgb0Q0Ut5LyTfaOtlOZRQ/view?usp=drivesdk' },
+            { title: 'شرح نور المجالي للمهندسة رزان ', url: 'https://drive.google.com/file/d/1m-Fh6KgYSKT_6SQNNxhqLiCJpo_GV-Va/view?usp=drivesdk' },
+            { title: 'Slides-Suggested problems', url: 'https://drive.google.com/drive/folders/1vbd42f5t-JbZM16ph3g-QWHx2GHVfxp6' },
+            { title: 'تفريغ رنا شادرمه شابتر 1 للمهندسة إسراء ', url: 'https://drive.google.com/file/d/1NFNj8MVcxdM3mgMeQ94BVwjdeO-Ooj27/view?usp=drivesdk' },
+            { title: 'دفتر للمهندسة رزان بقلم معتز ونسيم', url: 'https://drive.google.com/folderview?id=15jYruGquIqye4mWJfbIyEndrB6K-Y4HV' },
+            { title: 'شرح الدكتورة اسراء الشرع للفيرست والسكند', url: 'https://drive.google.com/folderview?id=1Ka_NaIK42W3OESUIl-V3ZVkCndAv-8Zk' },
+            { title: 'حلول بعض اسئلة الكتاب', url: 'https://drive.google.com/folderview?id=1S2FHVCk0NHFbb8clIQ6Jzao2s1EihOrj' }
+          ],
+          videos: [
+            { title: 'شرح  الدكتور فادي', url: 'https://drive.google.com/file/d/1Di8s5y4OVBgERp1TeZh90qki2RdkT807/view?usp=drivesdk' },
+            { title: 'شرح الدكتوره رزان', url: 'https://drive.google.com/drive/folders/1v4cRSwbsfnYXwMar05uJTLrohkyMrQ1Z' },
+            { title: 'شرح مسجل المهندس محمد لافي', url: 'https://www.youtube.com/playlist?list=PLdL3o9rqPLb57Zde4JPVlOww_i49Q1fr9' },
+            { title: 'شرح مسجل المهندس محمد عايد', url: 'https://www.youtube.com/playlist?list=PLkXK5Ys6YkPJeYfEHo8Rei1dToH6hB5e1' }
+          ],
+          exams: [
+            { title: 'فيرست', url: 'https://drive.google.com/file/d/1rgb2PVVfpCjf_2d7XlaBBHyn5-8kxgww/view?usp=drivesdk' },
+            { title: 'سكند', url: 'https://drive.google.com/file/d/1ApK9q-S6Mj6kF9JFfB5O2lQMstEIQlhb/view?usp=drivesdk' },
+            { title: 'فاينل', url: 'https://drive.google.com/file/d/1mwxBAzDfCYRwbIMPtVjjomSr8CH6tvLP/view?usp=drivesdk' }
+          ]
+        }
+      },
+
+
+      { 
+        id: '283212', 
+        name: 'الإشارات والأنظمة الطبية الحيوية', 
+        hours: 3, 
+        year: 3, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'تحليل الإشارات الحيوية المستمرة والمتقطعة وفلترتها واستجابتها.', 
+        prereqs: [{ id: '282040', note: 'سابق دراسة' }], 
+        unlocks: [
+          { id: '284211', note: 'سابق نجاح' },
+          { id: '284310', note: 'سابق نجاح' },
+          { id: '284600', note: 'سابق نجاح' }
+        ] 
+      },
+      { 
+        id: '283410', 
+        name: 'الميكانيكا الحيوية', 
+        hours: 3, 
+        year: 3, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'تطبيق مبادئ الميكانيكا على العظام والعضلات والمفاصل والحركة.', 
+        prereqs: [
+          { id: '821016', note: 'متطلب سابق' },
+          { id: '822030', note: 'سابق دراسة' }
+        ], 
+        unlocks: [{ id: '284400', note: 'سابق دراسة' }],
+         resources: {
+          notes: [
+            { title: 'الكتاب والمانيوال', url: 'https://drive.google.com/drive/folders/1Yo1CmD914E2KQltKE1I-Lmr2OmDg9h4E' },
+            { title: 'تفريغ المهندسة إسلام المومني', url: 'https://drive.google.com/drive/folders/1xJM-uLBeY_45vT96xKU5mY_qMG6KGsNy' },
+            { title: 'تفريغ المهندسه جمان', url: 'https://drive.google.com/drive/folders/1_LB3ISuWzQ5IDtnvqjpMsrYR39Jv-TGI' },
+            { title: ' دفتر الدكتور حسام', url: 'https://drive.google.com/drive/folders/1wqEM2bLYvRGqFfUUE1mJbgBa4aJO9u9l' },
+            { title: 'شروحات وتفاريغ أخرى', url: 'https://drive.google.com/drive/folders/1FNx6SL1eBghTaV-8HcSUGVjUyUaXJD9X' }
+          ]
+        }
+      },
+
+      { id: '821322', name: 'مبادىء في الاحصاء الحيوي',
+       hours: 3, year: 3, term: 1, category: 'dept_req', 
+       desc: 'التحليل الاحتمالي والإحصاء المطبق في العلوم الطبية والصحية.',
+        prereqs: [{ id: '822010', note: 'متطلب سابق' }], unlocks: []
+       },
+
+
+      { 
+        id: '822620', 
+        name: 'كيمياء حيوية', 
+        hours: 3, 
+        year: 3, 
+        term: 1, 
+        category: 'basic_sci', 
+        desc: 'دراسة البروتينات والأحماض النووية والكربوهيدرات والتفاعلات الحيوية.', 
+        prereqs: [
+          { id: '821033', note: 'متطلب سابق' },
+          { id: '822170', note: 'متطلب سابق' }
+        ], 
+        unlocks: [{ id: '284400', note: 'متطلب سابق' }] ,
+        resources: {
+          notes: [
+            { title: 'الكتاب', url: 'https://drive.google.com/drive/folders/1mNEah0lFXVituCfwfmgs-tCHoX-DxsY1' },
+            { title: 'تفاريغ الفيرست ', url: 'https://drive.google.com/drive/folders/1P4ANVQEPkmsotTCQjN3M4OI1MF27623H' },
+            { title: 'تفاريغ السكند', url: 'https://drive.google.com/drive/folders/1t_CYMWk0YmRCFFLpumCp4cDKSqk8UniQ' },
+            { title: 'تفاريغ الفاينل', url: 'https://drive.google.com/drive/folders/1NQBj-X9iGm0PQlbYAk5nFgGG3MK_3hv3' },
+            { title: 'Way to 100', url: 'https://drive.google.com/drive/folders/1v5wcSeeGwhVCNt75BuaFS-wrb2G5Iudu' }
+          ],
+          videos: [
+            { title: 'قناة نوتات ', url: 'https://t.me/+YneHikky9HM3ZDNk' }
+          ],
+          exams: [
+            { title: 'مكملات ', url: 'https://drive.google.com/drive/folders/1SBDe5w8fq7Q84OJk050MiD8F-EUUP8Ny' },
+            { title: 'فورمات فاينل أونلاين ', url: 'https://drive.google.com/file/d/1-qQNsrZw6SgsTIcdLYkZPnammLAKNiHs/view?usp=drivesdk' }
+          ]
+        }
+      },
+
+      { id: '2511030', name: 'المهارات الحياتية',
+       hours: 2, year: 3, term: 1, category: 'uni_req',
+        desc: 'مهارات التواصل والتفكير النقدي وإدارة الوقت وتطوير الذات.',
+         prereqs: [], unlocks: [] },
+
+      // YEAR 3 - TERM 2
+      { 
+        id: '283022', 
+        name: 'طرق الحل العددية', 
+        hours: 3, 
+        year: 3, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'الخوارزميات العددية لحل المعادلات والمصفوفات والتكاملات.', 
+        prereqs: [
+          { id: '822030', note: 'سابق دراسة' },
+          { id: '282300', note: 'متطلب سابق' }
+        ], 
+        unlocks: [] 
+      },
+      { 
+        id: '283140', 
+        name: 'الكترونيات الطبية(2)', 
+        hours: 3, 
+        year: 3, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'تصميم دوائر تضخيم الإشارات الحيوية المتقدمة والمرشحات الإلكترونية.', 
+        prereqs: [{ id: '283130', note: 'سابق دراسة' }], 
+        unlocks: [
+          { id: '283160', note: 'سابق أو متزامن' },
+          { id: '284110', note: 'سابق دراسة' },
+          { id: '284130', note: 'سابق دراسة' },
+          { id: '284620', note: 'سابق دراسة' },
+          { id: '284640', note: 'سابق دراسة' },
+          { id: '284660', note: 'سابق دراسة' }
+        ] 
+      },
+      { id: '283160', name: 'مختبر الالكترونيات الطبية', hours: 1, year: 3, term: 2, category: 'dept_req', desc: 'تطبيقات عملية لبناء الدوائر الإلكترونية الطبية واختبارها.', prereqs: [
+        { id: '283110', note: 'متطلب سابق' },
+        { id: '283130', note: 'سابق دراسة' },
+        { id: '283140', note: 'سابق أو متزامن' }
+      ], unlocks: [] },
+      { 
+        id: '283420', 
+        name: 'ميكانيكا الموائع الحيوية', 
+        hours: 3, 
+        year: 3, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'سلوك السوائل والغازات وديناميكية الدم والجهاز التنفسي.', 
+        prereqs: [
+          { id: '821016', note: 'متطلب سابق' },
+          { id: '822030', note: 'سابق دراسة' }
+        ], 
+        unlocks: [{ id: '284411', note: 'سابق نجاح' }] 
+      },
+      { 
+        id: '283440', 
+        name: 'ديناميكا حرارية', 
+        hours: 3, 
+        year: 3, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'قوانين الديناميكا الحرارية وانتقال الحرارة في الأنظمة الحيوية.', 
+        prereqs: [
+          { id: '821025', note: 'متطلب سابق' },
+          { id: '822030', note: 'سابق دراسة' }
+        ], 
+        unlocks: [{ id: '284411', note: 'متطلب سابق' }] 
+      },
+      { id: 'U_ELEC_1', name: 'متطلب جامعة اختياري', hours: 3, year: 3, term: 2, category: 'uni_elec', desc: 'مساق اختياري من المواد المتاحة في الجامعة.', prereqs: [], unlocks: [] },
+
+      // YEAR 4 - TERM 1
+      { 
+        id: '284110', 
+        name: 'الأجهزة الطبية الحيوية', 
+        hours: 3, 
+        year: 4, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'تصميم ومبدأ عمل أجهزة تخطيط القلب والدماغ والتنفس والدفع الحيوية.', 
+        prereqs: [
+          { id: '102364', note: 'سابق دراسة' },
+          { id: '283140', note: 'سابق دراسة' }
+        ], 
+        unlocks: [{ id: '284120', note: 'متطلب سابق' }] 
+      },
+      { 
+        id: '284130', 
+        name: 'المجسات ومحولات الطاقة الطبية الحيوية', 
+        hours: 3, 
+        year: 4, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'المستشعرات الطبية لقياس الضغط، الحرارة، والغازات في الجسم.', 
+        prereqs: [{ id: '283140', note: 'سابق دراسة' }], 
+        unlocks: [{ id: '285110', note: 'سابق أو متزامن' }] 
+      },
+      { 
+        id: '284211', 
+        name: 'معالجة الاشارات الرقمية', 
+        hours: 3, 
+        year: 4, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'معالجة الإشارات الحيوية رقمياً واستخدام تحويل فوريه المتقطع.', 
+        prereqs: [{ id: '283212', note: 'سابق نجاح' }], 
+        unlocks: [{ id: '284620', note: 'متطلب سابق' }] 
+      },
+      { 
+        id: '284310', 
+        name: 'النمذجة الفسيولوجية وأنظمة التحكم', 
+        hours: 3, 
+        year: 4, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'نمذجة الأنظمة الحيوية كأنظمة تحكم مغلقة وتحليل استقرارها.', 
+        prereqs: [
+          { id: '282300', note: 'متطلب سابق' },
+          { id: '283212', note: 'سابق نجاح' }
+        ], 
+        unlocks: [{ id: '284330', note: 'سابق/متزامن' }] 
+      },
+      { id: '284330', name: 'مختبر النمذجة الفسيولوجية وأنظمة التحكم', hours: 1, year: 4, term: 1, category: 'dept_req', desc: 'مختبر محاكاة الأنظمة الفسيولوجية باستخدام الماتلاب.', prereqs: [
+        { id: '282300', note: 'متطلب سابق' },
+        { id: '284310', note: 'سابق/متزامن' }
+      ], unlocks: [] },
+      { 
+        id: '284411', 
+        name: 'ظاهرة الانتقال الطبي الحيوي', 
+        hours: 3, 
+        year: 4, 
+        term: 1, 
+        category: 'dept_req', 
+        desc: 'انتقال الكتلة والحرارة في الأنسجة الحيوية والأعضاء الاصطناعية.', 
+        prereqs: [
+          { id: '102364', note: 'سابق دراسة' },
+          { id: '283420', note: 'سابق نجاح' },
+          { id: '283440', note: 'متطلب سابق' }
+        ], 
+        unlocks: [] 
+      },
+
+       // YEAR 4 - TERM 2
+      { id: '284120', name: 'مختبر الأجهزة الطبية الحيوية', hours: 1, year: 4, term: 2, category: 'dept_req', desc: 'تطبيقات عملية وفحص وصيانة الأجهزة الطبية المختلفة.', prereqs: [{ id: '284110', note: 'متطلب سابق' }], unlocks: [{ id: '285110', note: 'متطلب سابق' }] },
+      { 
+        id: '284400', 
+        name: 'مقدمة في المواد الطبية الحيوية', 
+        hours: 3, 
+        year: 4, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'دراسة الخواص الفيزيائية والكيميائية للمواد المزروعة في الجسم.', 
+        prereqs: [
+          { id: '283410', note: 'سابق دراسة' },
+          { id: '822620', note: 'متطلب سابق' }
+        ], 
+        unlocks: [
+          { id: '285411', note: 'سابق دراسة' },
+          { id: '285511', note: 'سابق دراسة' }
+        ] 
+      },
+      { id: '284600', name: 'أنظمة التصوير الطبية', hours: 3, year: 4, term: 2, category: 'dept_req', desc: 'تكنولوجيا الأشعة السينية، الرنين المغناطيسي، والموجات فوق الصوتية.', prereqs: [
+        { id: '283110', note: 'متطلب سابق' },
+        { id: '283212', note: 'سابق نجاح' }
+      ], unlocks: [] },
+      { 
+        id: '284620', 
+        name: 'المتحكمات الدقيقة والأنظمة المضمنة', 
+        hours: 3, 
+        year: 4, 
+        term: 2, 
+        category: 'dept_req', 
+        desc: 'برمجة الميكروكونترولر والأنظمة المدمجة المطبقة في الأجهزة الطبية.', 
+        prereqs: [
+          { id: '282300', note: 'متطلب سابق' },
+          { id: '283140', note: 'سابق دراسة' },
+          { id: '284211', note: 'متطلب سابق' }
+        ], 
+        unlocks: [{ id: '284640', note: 'سابق أو متزامن' }] 
+      },
+      { id: '284640', name: 'مختبر المتحكمات الدقيقة والأنظمة المضمنة', hours: 1, year: 4, term: 2, category: 'dept_req', desc: 'مختبر برمجة وتركيب دوائر المتحكمات الميكروية.', prereqs: [
+        { id: '282300', note: 'متطلب سابق' },
+        { id: '283140', note: 'سابق دراسة' },
+        { id: '284620', note: 'سابق أو متزامن' }
+      ], unlocks: [] },
+      { id: '284660', name: 'التصميم الهندسي الطبي الحيوي', hours: 3, year: 4, term: 2, category: 'dept_req', desc: 'منهجية التصميم والابتكار للمعدات والمنتجات الطبية الحيوية.', prereqs: [
+        { id: '282012', note: 'سابق نجاح' },
+        { id: '102364', note: 'سابق دراسة' },
+        { id: '283140', note: 'سابق دراسة' }
+      ], unlocks: [] },
+      { id: 'U_ELEC_2', name: 'متطلب جامعة اختياري', hours: 3, year: 4, term: 2, category: 'uni_elec', desc: 'مساق اختياري ثانٍ من مواد الجامعة المتاحة.', prereqs: [], unlocks: [] },
+
+      // YEAR 4 - SUMMER
+      { id: '284901', name: 'التدريب الهندسي', hours: 3, year: 4, term: 3, category: 'dept_req', desc: 'تدريب ميداني في المستشفيات أو الشركات الطبية (يتطلب إنهاء 117 ساعة معتمدة).', prereqs: [], unlocks: [] },
+
+      // YEAR 5 - TERM 1
+      { id: '285110', name: 'مختبر المجسات والقياسات الحيوية', hours: 1, year: 5, term: 1, category: 'dept_req', desc: 'تجارب قياس واستشعار الإشارات الفسيولوجية المختلفة.', prereqs: [
+        { id: '284120', note: 'متطلب سابق' },
+        { id: '284130', note: 'سابق أو متزامن' }
+      ], unlocks: [] },
+      { id: '285411', name: 'مختبر الميكانيكا الحيوية والمواد الحيوية', hours: 1, year: 5, term: 1, category: 'dept_req', desc: 'اختبار الخصائص الميكانيكية والتوافق الحيوي للمواد.', prereqs: [{ id: '284400', note: 'سابق دراسة' }], unlocks: [] },
+      { id: '285511', name: 'البيوتكنولوجية الجزئية والخليوية', hours: 3, year: 5, term: 1, category: 'dept_req', desc: 'تطبيقات التقنيات الحيوية والهندسة الوراثية على المستوى الخلوي.', prereqs: [{ id: '284400', note: 'سابق دراسة' }], unlocks: [] },
+      { id: '285910', name: 'مشروع تخرج (1)', hours: 1, year: 5, term: 1, category: 'dept_req', desc: 'دراسة وإعداد مقترح بحثي لمشروع التخرج (يتطلب إنهاء 117 ساعة معتمدة).', prereqs: [], unlocks: [{ id: '285920', note: 'متطلب سابق' }] },
+      { id: 'U_ELEC_3', name: 'متطلب جامعة اختياري', hours: 3, year: 5, term: 1, category: 'uni_elec', desc: 'مساق اختياري ثالث من مواد الجامعة.', prereqs: [], unlocks: [] },
+      { id: 'D_ELEC_1', name: 'متطلب قسم اختياري', hours: 3, year: 5, term: 1, category: 'dept_elec', desc: 'مساق اختياري متقدم من قسم الهندسة الطبية الحيوية.', prereqs: [], unlocks: [] },
+
+      // YEAR 5 - TERM 2
+      { id: '285920', name: 'مشروع تخرج (2)', hours: 3, year: 5, term: 2, category: 'dept_req', desc: 'تنفيذ وتطبيق مشروع التخرج واختبار النتائج وعرضها.', prereqs: [{ id: '285910', note: 'متطلب سابق' }], unlocks: [] },
+      { id: 'D_ELEC_2', name: 'متطلب قسم اختياري', hours: 3, year: 5, term: 2, category: 'dept_elec', desc: 'مساق اختياري متقدم ثانٍ من مواد القسم.', prereqs: [], unlocks: [] },
+      { 
+        id: '821104', 
+        name: 'التربية الوطنيه (جامعة إجباري)', 
+        hours: 3, 
+        year: 5, 
+        term: 2, 
+        category: 'uni_req', 
+        desc: 'تعزيز المواطنة والانتماء والتطور التاريخي والمؤسسي للأردن.', 
+        prereqs: [], 
+        unlocks: [],
+        resources: {
+          notes: [
+            { title: 'الدرايف الشامل 📁', url: 'https://drive.google.com/drive/folders/10Vzw0mb-xSHR91PIOq6IpnClS_IPHNgE' }
+          ],
+          videos: [
+            { title: 'لينك القناة - تشارك 🎥', url: 'https://t.me/Tasharuk_Responsibility' }
+          ],
+          exams: [
+            { title: 'اسالة السنوات تلي 📚', url: 'https://t.me/Tasharuk_Responsibility/382' },
+            { title: 'مكمل المد 📘', url: 'https://drive.google.com/drive/folders/1XWMeoRGu4Dc-8XH9lnBcvXwVDtiuU9ty?usp=drive_link' }
+          ]
+        }
+      },
+      { id: 'D_ELEC_3', name: 'متطلب قسم اختياري', hours: 3, year: 5, term: 2, category: 'dept_elec', desc: 'مساق اختياري متقدم ثالث من مواد القسم.', prereqs: [], unlocks: [] }
+    ];
+
+    // Simple Map helper for Course ID to Name
+    const COURSE_MAP = INITIAL_COURSES.reduce((acc, c) => {
+      acc[c.id] = c.name;
+      return acc;
+    }, {});
+
+    function App() {
+      const [isDarkMode, setIsDarkMode] = useState(true);
+      const [searchTerm, setSearchTerm] = useState('');
+      const [selectedCourse, setSelectedCourse] = useState(null);
+      const [activeTab, setActiveTab] = useState('overview');
+      const [showReport, setShowReport] = useState(false);
+      
+      // Course Statuses: 'neutral' | 'in_progress' | 'passed'
+      const [statuses, setStatuses] = useState(() => {
+        try {
+          const saved = localStorage.getItem('bme_course_statuses');
+          return saved ? JSON.parse(saved) : {};
+        } catch(e) {
+          return {};
+        }
+      });
+
+      // Collapsible Years State
+      const [expandedYears, setExpandedYears] = useState({
+        1: true,
+        2: true,
+        3: true,
+        4: true,
+        5: true
+      });
+
+      useEffect(() => {
+        localStorage.setItem('bme_course_statuses', JSON.stringify(statuses));
+      }, [statuses]);
+
+      // Calculate Total Hours & Stats
+      const stats = useMemo(() => {
+        let totalCompleted = 0;
+        let totalInProgress = 0;
+
+        const catTotals = {
+          uni_req: { name: 'جامعة إجباري', total: 16, completed: 0, inProgress: 0 },
+          uni_elec: { name: 'جامعة اختياري', total: 9, completed: 0, inProgress: 0 },
+          college_req: { name: 'كلية إجباري', total: 32, completed: 0, inProgress: 0 },
+          dept_req: { name: 'قسم إجباري', total: 94, completed: 0, inProgress: 0 },
+          dept_elec: { name: 'قسم اختياري', total: 9, completed: 0, inProgress: 0 }
+        };
+
+        INITIAL_COURSES.forEach(course => {
+          const st = statuses[course.id] || 'neutral';
+          if (st === 'passed') totalCompleted += course.hours;
+          else if (st === 'in_progress') totalInProgress += course.hours;
+
+          let catKey = course.category;
+          if (catKey === 'basic_sci' || catKey === 'basic_eng') catKey = 'college_req';
+
+          if (catTotals[catKey]) {
+            if (st === 'passed') catTotals[catKey].completed += course.hours;
+            else if (st === 'in_progress') catTotals[catKey].inProgress += course.hours;
+          }
+        });
+
+        return {
+          totalCompleted,
+          totalInProgress,
+          totalHours: 160,
+          catTotals
+        };
+      }, [statuses]);
+
+      // Calculate Available / Unlocked Courses based on completed courses
+      const availableCourses = useMemo(() => {
+        return INITIAL_COURSES.filter(course => {
+          // If already passed, it is no longer available to register
+          if (statuses[course.id] === 'passed') return false;
+
+          // Check credit hours prerequisite (e.g. Training & Grad Project 1 need 117 hours)
+          if ((course.id === '284901' || course.id === '285910') && stats.totalCompleted < 117) {
+            return false;
+          }
+
+          // If no prerequisites, it is available by default
+          if (!course.prereqs || course.prereqs.length === 0) return true;
+
+          // Check if all prerequisites are fulfilled
+          return course.prereqs.every(pr => {
+            const prStatus = statuses[pr.id];
+            if (pr.note && (pr.note.includes('سابق دراسة') || pr.note.includes('متزامن'))) {
+              return prStatus === 'passed' || prStatus === 'in_progress';
+            }
+            return prStatus === 'passed';
+          });
+        });
+      }, [statuses, stats.totalCompleted]);
+
+      // Cycle status on click: neutral -> in_progress -> passed -> neutral
+      const handleCourseClick = (courseId) => {
+        setStatuses(prev => {
+          const current = prev[courseId] || 'neutral';
+          let next = 'in_progress';
+          if (current === 'in_progress') next = 'passed';
+          else if (current === 'passed') next = 'neutral';
+          
+          return { ...prev, [courseId]: next };
+        });
+      };
+
+      // Toggle Year Accordion
+      const toggleYear = (yearNum) => {
+        setExpandedYears(prev => ({ ...prev, [yearNum]: !prev[yearNum] }));
+      };
+
+      // Bulk complete / uncomplete a whole year
+      const toggleYearCompletion = (yearNum, e) => {
+        e.stopPropagation();
+        const yearCourses = INITIAL_COURSES.filter(c => c.year === yearNum);
+        const allCompleted = yearCourses.every(c => statuses[c.id] === 'passed');
+
+        setStatuses(prev => {
+          const nextState = { ...prev };
+          yearCourses.forEach(c => {
+            nextState[c.id] = allCompleted ? 'neutral' : 'passed';
+          });
+          return nextState;
+        });
+      };
+
+      // Filtered Courses
+      const filteredCourses = useMemo(() => {
+        if (!searchTerm.trim()) return INITIAL_COURSES;
+        const term = searchTerm.toLowerCase().trim();
+        return INITIAL_COURSES.filter(c => 
+          c.name.toLowerCase().includes(term) || 
+          c.id.toLowerCase().includes(term)
+        );
+      }, [searchTerm]);
+
+      const getYearName = (yr) => {
+        const names = { 1: 'السنة الأولى', 2: 'السنة الثانية', 3: 'السنة الثالثة', 4: 'السنة الرابعة', 5: 'السنة الخامسة' };
+        return names[yr] || `السنة ${yr}`;
+      };
+        return (
+        <div className={`min-h-screen ${isDarkMode ? 'bg-[#0b1120] text-slate-100' : 'bg-slate-50 text-slate-900'} transition-colors duration-300 pb-16`}>
+          
+          <header className={`border-b ${isDarkMode ? 'border-slate-800 bg-[#0f172a]/90' : 'border-slate-200 bg-white/90'} backdrop-blur-md sticky top-0 z-30 transition-colors`}>
+            <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6">
+              
+              {/* Top Banner Row */}
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                
+                {/* Branding & Title */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-500/20">
+                    🦾
+                  </div>
+                  <div>
+                    <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                      الخطّة الشجريّة التفاعليّة
+                    </h1>
+                    <p className={`text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'} font-medium`}>
+                      الهندسة الطبية الحيوية - جامعة العلوم والتكنولوجيا الأردنية (JUST)
+                    </p>
+                  </div>
+                </div>
+
+                {/* Hours Counter Progress Box */}
+                <div className={`flex items-center gap-4 px-4 py-2 rounded-2xl border ${isDarkMode ? 'bg-slate-900/80 border-slate-800' : 'bg-slate-100 border-slate-200'}`}>
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs text-slate-400 font-semibold">إنجاز الخطة</span>
+                    <span className="text-base font-bold text-sky-400">
+                      160 / {stats.totalCompleted} <span className="text-xs">ساعة</span>
+                    </span>
+                  </div>
+                  <div className="w-24 h-2 bg-slate-700/50 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min(100, (stats.totalCompleted / 160) * 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex flex-col text-[10px] space-y-0.5">
+                    <span className="text-emerald-400 font-semibold">◆ ناجح: {stats.totalCompleted} س</span>
+                    <span className="text-amber-400 font-semibold">◆ قيد الدراسة: {stats.totalInProgress} س</span>
+                  </div>
+                </div>
+
+                {/* Actions: Navigation & Theme Switcher */}
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setShowReport(true)}
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 transition flex items-center gap-1.5"
+                  >
+                    <span>📊</span>
+                    <span>تقرير التقدم والأداء</span>
+                  </button>
+
+                  <button 
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    className={`p-2.5 rounded-xl border transition ${isDarkMode ? 'bg-slate-800 border-slate-700 text-amber-400 hover:bg-slate-700' : 'bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200'}`}
+                    title="تغيير المظهر"
+                  >
+                    {isDarkMode ? '☀️' : '🌙'}
+                  </button>
+                </div>
+
+              </div>
+
+              {/* Bottom Search & Filter Bar */}
+              <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
+                <div className="relative flex-1 w-full">
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔍</span>
+                  <input 
+                    type="text" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="ابحث برقم المادة أو الاسم (مثلاً: 282120 أو دوائر)..."
+                    className={`w-full pr-10 pl-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border outline-none transition ${isDarkMode ? 'bg-slate-900 border-slate-800 text-slate-200 focus:border-sky-500' : 'bg-white border-slate-300 text-slate-800 focus:border-sky-500'}`}
+                  />
+                </div>
+
+                {/* Prophetic Quote Banner */}
+                <div className={`w-full sm:w-auto px-4 py-2 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 ${isDarkMode ? 'bg-sky-950/30 border-sky-800/40 text-sky-300' : 'bg-sky-50 border-sky-200 text-sky-800'}`}>
+                  <span>"</span>
+                  <span>قال رسول الله ﷺ: «احرص على ما ينفعك، واستعن بالله ولا تعجز»</span>
+                  <span>"</span>
+                </div>
+              </div>
+
+            </div>
+          </header>
+
+          <main className="max-w-7xl mx-auto px-4 py-6 sm:px-6">
+            
+            {/* Guide hint */}
+            <div className={`mb-6 p-3 rounded-xl border text-xs flex flex-wrap items-center justify-between gap-3 ${isDarkMode ? 'bg-slate-900/50 border-slate-800 text-slate-400' : 'bg-white border-slate-200 text-slate-600'}`}>
+              <div className="flex items-center gap-4 flex-wrap">
+                <span className="font-bold text-slate-300">طريقة الاستخدام:</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-600"></span> نقرة واحدة: قيد الدراسة (برتقالي)</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> نقرتان: ناجح (أخضر)</span>
+                <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span> ثلاث نقرات: اعادة تعيين</span>
+              </div>
+              <span className="text-[11px] text-sky-400 font-medium">💡 انقر مرتين سريعتين أو على زر التفاصيل لفتح نافذة المادة والمصادر</span>
+            </div>
+
+            {/* Years Accordions */}
+            <div className="space-y-6">
+              {[1, 2, 3, 4, 5].map(yearNum => {
+                const yearCourses = filteredCourses.filter(c => c.year === yearNum);
+                if (yearCourses.length === 0) return null;
+
+                const isExpanded = expandedYears[yearNum];
+                const yearPassedCount = yearCourses.filter(c => statuses[c.id] === 'passed').length;
+                const isAllYearPassed = yearCourses.length > 0 && yearPassedCount === yearCourses.length;
+
+                return (
+                  <div key={yearNum} className={`rounded-2xl border transition overflow-hidden ${isDarkMode ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                    
+                    {/* Accordion Header */}
+                    <div 
+                      onClick={() => toggleYear(yearNum)}
+                      className={`px-5 py-4 flex items-center justify-between cursor-pointer select-none border-b transition ${isDarkMode ? 'border-slate-800/80 hover:bg-slate-800/40' : 'border-slate-100 hover:bg-slate-50'}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold text-sm border border-sky-500/20">
+                          {yearNum}
+                        </span>
+                        <h2 className="text-base sm:text-lg font-bold">
+                          {getYearName(yearNum)}
+                        </h2>
+                        <span className={`text-xs px-2.5 py-1 rounded-full font-semibold ${isDarkMode ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-600'}`}>
+                          {yearPassedCount} / {yearCourses.length} مادة منجزة
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        {/* Complete Year Quick Button */}
+                        <button
+                          onClick={(e) => toggleYearCompletion(yearNum, e)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 ${
+                            isAllYearPassed 
+                              ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/30' 
+                              : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                          }`}
+                          title="إنهاء مواد هذه السنة بالكامل"
+                        >
+                          <span>{isAllYearPassed ? '✓' : 'إكمال السنة كاملاً'}</span>
+                        </button>
+
+                        <span className="text-slate-400 text-sm font-bold">
+                          {isExpanded ? '▲' : '▼'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Accordion Content */}
+                    {isExpanded && (
+                      <div className="p-4 sm:p-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+                          {yearCourses.map(course => {
+                            const st = statuses[course.id] || 'neutral';
+                            
+                            let cardBg = isDarkMode ? 'bg-slate-800/60 border-slate-700/60 hover:border-slate-600' : 'bg-slate-50 border-slate-200 hover:border-slate-300';
+                            let badgeBg = isDarkMode ? 'bg-slate-700/60 text-slate-300' : 'bg-slate-200 text-slate-700';
+                            let statusText = 'غير مجتاز';
+
+                            if (st === 'in_progress') {
+                              cardBg = 'bg-amber-950/40 border-amber-500/50 text-amber-200 hover:border-amber-400 shadow-lg shadow-amber-500/5';
+                              badgeBg = 'bg-amber-500/20 text-amber-300 border border-amber-500/30';
+                              statusText = 'قيد الدراسة ⏳';
+                            } else if (st === 'passed') {
+                              cardBg = 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200 hover:border-emerald-400 shadow-lg shadow-emerald-500/5';
+                              badgeBg = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                              statusText = 'ناجح ✓';
+                            }
+
+                            return (
+                              <div
+                                key={course.id}
+                                onClick={() => handleCourseClick(course.id)}
+                                onDoubleClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedCourse(course);
+                                }}
+                                className={`group p-4 rounded-xl border transition-all duration-200 cursor-pointer relative flex flex-col justify-between ${cardBg}`}
+                              >
+                                <div>
+                                  {/* Top Row: Course ID & Credit Hours */}
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="font-mono text-[11px] font-bold text-sky-400 tracking-wider">
+                                      {course.id}
+                                    </span>
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${badgeBg}`}>
+                                      {course.hours} س
+                                    </span>
+                                  </div>
+
+                                  {/* Course Name */}
+                                  <h3 className="font-bold text-sm leading-snug mb-3">
+                                    {course.name}
+                                  </h3>
+                                </div>
+
+                                {/* Bottom Info Row */}
+                                <div className="flex items-center justify-between pt-2.5 border-t border-slate-700/30 text-[11px]">
+                                  <span className="font-semibold">{statusText}</span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedCourse(course);
+                                    }}
+                                    className="text-sky-400 hover:text-sky-300 underline font-semibold flex items-center gap-1"
+                                  >
+                                    <span>التفاصيل</span>
+                                    <span>↗</span>
+                                  </button>
+                                </div>
+
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                  </div>
+                );
+              })}
+            </div>
+
+          </main>
+
+          {/* COURSE DETAILS MODAL */}
+          {selectedCourse && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-[#0b1329] border border-slate-800 text-slate-100 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl relative">
+                
+                {/* Modal Header */}
+                <div className="p-5 border-b border-slate-800 flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-extrabold flex items-center gap-2 text-white">
+                      <span>{selectedCourse.name}</span>
+                      <span className="text-sky-400 font-mono text-base">{selectedCourse.id}</span>
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-1">
+                      رمز المادة: {selectedCourse.id} | {selectedCourse.hours} ساعات معتمدة
+                    </p>
+                  </div>
+                  
+                  {/* Close button */}
+                  <button 
+                    onClick={() => { setSelectedCourse(null); setActiveTab('overview'); }}
+                    className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Tabs Bar */}
+                <div className="flex items-center gap-1 px-4 border-b border-slate-800 bg-slate-900/50 overflow-x-auto text-xs font-bold scrollbar-none">
+                  {[
+                    { id: 'overview', label: 'نظرة عامة ومتطلبات' },
+                    { id: 'notes', label: 'الملخصات والشروحات' },
+                    { id: 'videos', label: 'الفيديوهات التعليمية' },
+                    { id: 'exams', label: 'أسئلة السنوات' },
+                    { id: 'contribute', label: 'مساهمة ملفات' }
+                  ].map(tab => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`py-3 px-3.5 border-b-2 whitespace-nowrap transition ${activeTab === tab.id ? 'border-sky-400 text-sky-400' : 'border-transparent text-slate-400 hover:text-slate-200'}`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Modal Body */}
+                <div className="p-5 max-h-[70vh] overflow-y-auto space-y-4">
+                  
+                  {/* TAB 1: OVERVIEW & PREREQUISITES */}
+                  {activeTab === 'overview' && (
+                    <div className="space-y-4">
+                      {/* Academic Description Card */}
+                      <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5">
+                        <h4 className="text-xs font-bold text-slate-200">الوصف والأهداف الأكاديمية:</h4>
+                        <p className="text-xs text-slate-300 leading-relaxed">
+                          {selectedCourse.desc || 'تتناول هذه المادة المبادئ الأساسية وتطبيقاتها العلمية والعملية في الهندسة الطبية الحيوية.'}
+                        </p>
+                      </div>
+                      {/* Prereq & Unlocks Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        
+                        {/* ← المتطلبات السابقة */}
+                        <div className="p-4 rounded-xl bg-red-950/10 border border-red-500/20 text-red-200 space-y-2">
+                          <h4 className="text-xs font-bold text-red-400 flex items-center gap-1">
+                            <span>← المتطلبات السابقة:</span>
+                          </h4>
+                          {selectedCourse.prereqs && selectedCourse.prereqs.length > 0 ? (
+                            <ul className="space-y-1.5 text-xs">
+                              {selectedCourse.prereqs.map((pr, idx) => (
+                                <li key={idx} className="flex items-center gap-1.5 font-medium">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+                                  <span>{pr.id} | {COURSE_MAP[pr.id] || 'مادة'}</span>
+                                  {pr.note && <span className="text-[10px] bg-red-500/20 text-red-300 px-1.5 py-0.5 rounded border border-red-500/30">({pr.note})</span>}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-xs text-slate-400">لا يوجد متطلب سابق لهذه المادة</p>
+                          )}
+                        </div>
+
+                        {/* تفتح للمادة → */}
+                        <div className="p-4 rounded-xl bg-emerald-950/10 border border-emerald-500/20 text-emerald-200 space-y-2">
+                          <h4 className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                            <span>تفتح للمادة →</span>
+                          </h4>
+                          {selectedCourse.unlocks && selectedCourse.unlocks.length > 0 ? (
+                            <ul className="space-y-1.5 text-xs">
+                              {selectedCourse.unlocks.map((un, idx) => (
+                                <li key={idx} className="flex items-center gap-1.5 font-medium">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                  <span>{un.id} | {COURSE_MAP[un.id] || 'مادة'}</span>
+                                  {un.note && <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/30">({un.note})</span>}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <p className="text-xs text-slate-400">لا تفتح مواد لاحقة مباشرة</p>
+                          )}
+                        </div>
+
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 2: NOTES & RESOURCES */}
+                  {activeTab === 'notes' && (
+                    selectedCourse.resources && selectedCourse.resources.notes && selectedCourse.resources.notes.length > 0 ? (
+                      <div className="space-y-2.5">
+                        {selectedCourse.resources.notes.map((res, idx) => (
+                          <a
+                            key={idx}
+                            href={res.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-3.5 rounded-xl border border-sky-500/30 bg-sky-950/20 hover:bg-sky-900/40 text-sky-300 font-semibold transition text-xs group"
+                          >
+                            <span className="flex items-center gap-2">📄 {res.title}</span>
+                            <span className="text-[10px] bg-sky-500/20 text-sky-300 px-2 py-1 rounded border border-sky-500/30 group-hover:bg-sky-500 group-hover:text-white transition">
+                              فتح الرابط ↗
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-xs text-slate-400">
+                        سيتم إضافة ملفات ومصادر هذا القسم قريباً في التحديثات القادمة.
+                      </div>
+                    )
+                  )}
+
+                  {/* TAB 3: VIDEOS */}
+                  {activeTab === 'videos' && (
+                    selectedCourse.resources && selectedCourse.resources.videos && selectedCourse.resources.videos.length > 0 ? (
+                      <div className="space-y-2.5">
+                        {selectedCourse.resources.videos.map((res, idx) => (
+                          <a
+                            key={idx}
+                            href={res.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-3.5 rounded-xl border border-red-500/30 bg-red-950/20 hover:bg-red-900/40 text-red-300 font-semibold transition text-xs group"
+                          >
+                            <span className="flex items-center gap-2">🎥 {res.title}</span>
+                            <span className="text-[10px] bg-red-500/20 text-red-300 px-2 py-1 rounded border border-red-500/30 group-hover:bg-red-500 group-hover:text-white transition">
+                              مشاهدة ↗
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-xs text-slate-400">
+                        سيتم إضافة الشروحات والفيديوهات التعليمية قريباً.
+                      </div>
+                    )
+                  )}
+
+                  {/* TAB 4: EXAMS */}
+                  {activeTab === 'exams' && (
+                    selectedCourse.resources && selectedCourse.resources.exams && selectedCourse.resources.exams.length > 0 ? (
+                      <div className="space-y-2.5">
+                        {selectedCourse.resources.exams.map((res, idx) => (
+                          <a
+                            key={idx}
+                            href={res.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between p-3.5 rounded-xl border border-amber-500/30 bg-amber-950/20 hover:bg-amber-900/40 text-amber-300 font-semibold transition text-xs group"
+                          >
+                            <span className="flex items-center gap-2">📝 {res.title}</span>
+                            <span className="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-1 rounded border border-amber-500/30 group-hover:bg-amber-500 group-hover:text-white transition">
+                              فتح المجلد ↗
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-xs text-slate-400">
+                        سيتم إضافة أسئلة الامتحانات لهذه المادة قريباً.
+                      </div>
+                    )
+                  )}
+
+                  {/* TAB 5: CONTRIBUTE */}
+                  {activeTab === 'contribute' && (
+                    <div className="py-6 text-center space-y-3">
+                      <p className="text-xs text-slate-300">
+                        هل لديك ملفات، ملخصات أو أسئلة امتحانات وترغب بمشاركتها مع زملائك؟
+                      </p>
+                      <a
+                        href="https://docs.google.com/forms/d/e/1FAIpQLSelndW0vU6qKBDa5On2nD0F9DBa7PHNZSHav0hreud58LhO3Q/viewform?usp=dialog"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block px-4 py-2 rounded-xl bg-sky-500 text-white font-bold text-xs shadow-lg hover:bg-sky-600 transition"
+                      >
+                        اضغط هنا لمساهمة الملفات 📤
+                      </a>
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* PROGRESS REPORT MODAL */}
+          {showReport && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-[#0b1329] border border-slate-800 text-slate-100 rounded-2xl w-full max-w-lg p-6 relative space-y-4 max-h-[90vh] flex flex-col shadow-2xl">
+                
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3 flex-shrink-0">
+                  <h3 className="font-bold text-lg text-sky-400 flex items-center gap-2">
+                    <span>📊</span>
+                    <span>تقرير التقدم والأداء الأكاديمي</span>
+                  </h3>
+                  <button onClick={() => setShowReport(false)} className="text-slate-400 hover:text-white transition p-1">✕</button>
+                </div>
+
+                {/* Scrollable Body */}
+                <div className="overflow-y-auto space-y-4 pr-1">
+                  
+                  {/* Overall Total Bar */}
+                  <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                    <span className="text-xs font-bold text-slate-300">إجمالي ساعات الخطة المكتملة:</span>
+                    <span className="font-bold text-sky-400 text-sm">
+                      {stats.totalCompleted} / 160 ساعة
+                    </span>
+                  </div>
+
+                  {/* Hours Stats By Category */}
+                  <div className="space-y-2.5 text-xs">
+                    {Object.entries(stats.catTotals).map(([key, cat]) => {
+                      const percentage = Math.min(100, Math.round((cat.completed / cat.total) * 100));
+                      const remaining = Math.max(0, cat.total - cat.completed);
+
+                      return (
+                        <div key={key} className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                          <div className="flex justify-between items-center font-bold">
+                            <span className="text-slate-200">{cat.name} ({cat.total} ساعة)</span>
+                            <span className="text-emerald-400">{cat.completed} / {cat.total} ساعة</span>
+                          </div>
+                          <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden flex">
+                            <div 
+                              className="h-full bg-emerald-500 transition-all duration-300" 
+                              style={{ width: `${percentage}%` }}
+                            />
+                            {cat.inProgress > 0 && (
+                              <div 
+                                className="h-full bg-amber-500 transition-all duration-300" 
+                                style={{ width: `${Math.min(100 - percentage, (cat.inProgress / cat.total) * 100)}%` }}
+                              />
+                            )}
+                          </div>
+                          <div className="flex justify-between text-[10px] text-slate-400">
+                            <span>المكتمل: {cat.completed} س</span>
+                            {cat.inProgress > 0 && <span className="text-amber-400">قيد الدراسة: {cat.inProgress} س</span>}
+                            <span>المتبقي: {remaining} س</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Available & Unlocked Courses Section */}
+                  <div className="border-t border-slate-800 pt-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-xs text-emerald-400 flex items-center gap-1.5">
+                        <span>🔓</span>
+                        <span>المواد المتاح تسجيلها حالياً ({availableCourses.length} مادة):</span>
+                      </h4>
+                      <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20 font-bold">
+                        {availableCourses.reduce((sum, c) => sum + c.hours, 0)} ساعة متاحة
+                      </span>
+                    </div>
+
+                    {availableCourses.length > 0 ? (
+                      <div className="space-y-2 max-h-64 overflow-y-auto pl-1">
+                        {availableCourses.map(course => {
+                          const isInProg = statuses[course.id] === 'in_progress';
+                          return (
+                            <div 
+                              key={course.id} 
+                              className={`p-3 rounded-xl border text-xs transition flex items-center justify-between gap-2 ${
+                                isInProg 
+                                  ? 'bg-amber-950/20 border-amber-500/30 text-amber-200' 
+                                  : 'bg-slate-900/90 border-slate-800 text-slate-200 hover:border-slate-700'
+                              }`}
+                            >
+                              <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-sky-400 font-mono text-[11px]">{course.id}</span>
+                                  <span className="font-bold">{course.name}</span>
+                                </div>
+                                <p className="text-[10px] text-slate-400">
+                                  {course.prereqs && course.prereqs.length > 0 
+                                    ? `فُتحت بناءً على: ${course.prereqs.map(p => COURSE_MAP[p.id] || p.id).join('، ')}`
+                                    : 'بدون متطلب سابق'}
+                                </p>
+                              </div>
+                              <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                                <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-bold">
+                                  {course.hours} س
+                                </span>
+                                {isInProg && (
+                                  <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">
+                                    قيد الدراسة ⏳
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-center text-xs text-slate-400">
+                        لا توجد مواد متاح تسجيلها حالياً. يرجى إنجاز المتطلبات السابقة أولاً.
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+
+                {/* Footer Action */}
+                <div className="pt-2 border-t border-slate-800 flex-shrink-0">
+                  <button
+                    onClick={() => setShowReport(false)}
+                    className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 font-bold text-xs text-white transition shadow-lg shadow-sky-500/20"
+                  >
+                    إغلاق التقرير
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* FOOTER */}
+          <footer className="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800/60">
+            <p className="text-slate-300 font-bold text-sm">إعداد وتصميم المهندسة رنا حسين شادرمه</p>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
