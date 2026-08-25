@@ -843,12 +843,22 @@
           { id: '822030', note: 'سابق دراسة' },
           { id: '282300', note: 'متطلب سابق' }
         ], 
-        unlocks: [] 
+        unlocks: [],
+         resources: {
+          notes: [
+            { title: 'الكتاب والمانيوال ', url: 'https://drive.google.com/drive/folders/1TiM2BfHjMfjW56xraIwcseBKWLEOB0NC' },
+            { title: 'تفريغ وشروحات', url: 'https://drive.google.com/drive/folders/1Q7gv-CNf6q0adGuEKjv589s8ii0HDo3w' }
+          ],
+          videos: [
+            { title: 'شرح الدكتور احمد ', url: 'https://drive.google.com/drive/folders/1PKaJwX9SUI99ipgv0UqB9pwOXq8VUBkE' },
+            { title: 'شرح المهندسة رزان', url: 'https://drive.google.com/drive/folders/12HbNfvZonfZsrm5f_-zJ6L5LcPf0rNec' }
+          ]
+        }
       },
       
       { 
         id: '283140', 
-        name: 'الكترونيات الطبية 2)', 
+        name: 'الكترونيات الطبية 2', 
         hours: 3, 
         year: 3, 
         term: 2, 
@@ -905,8 +915,22 @@
           { id: '821016', note: 'متطلب سابق' },
           { id: '822030', note: 'سابق دراسة' }
         ], 
-        unlocks: [{ id: '284411', note: 'سابق نجاح' }] 
+        unlocks: [{ id: '284411', note: 'سابق نجاح' }] ,
+        resources: {
+          notes: [
+            { title: ' الكتاب ', url: 'https://drive.google.com/drive/folders/1lEELkf5UU6jWWqeFjW8zmB0uVQP5ylsB' },
+            { title: 'تفريغ المهندسة لمياء', url: 'https://drive.google.com/drive/folders/1y88Bson_ALRMDIxAxbLTtAwFVBppDeQz' },
+            { title: 'تفريغ المهندسة إسلام ', url: 'https://drive.google.com/drive/folders/1a33uizXiv69Z4tQmnADC5-PL_YzmE3c8' },
+            { title: 'المانيوال', url: 'https://drive.google.com/drive/folders/1gf5pMnH7FV9w3pZztPm12jA1dGmHlj9B' },
+            { title: 'Data sheet', url: 'https://drive.google.com/file/d/11sUrPFH-l4ohKUydgG_7oJAy5oZL4YC3/view?usp=drivesdk' }
+          ],
+            videos: [
+            { title: 'شرح المهندسة رؤى', url: 'https://drive.google.com/drive/folders/1lhyRrQnnqJwfYRMcxY7fLgUxD_cdzGME' }
+          ]
+        }
       },
+
+      
       { 
         id: '283440', 
         name: 'ديناميكا حرارية', 
@@ -919,8 +943,21 @@
           { id: '821025', note: 'متطلب سابق' },
           { id: '822030', note: 'سابق دراسة' }
         ], 
-        unlocks: [{ id: '284411', note: 'متطلب سابق' }] 
+        unlocks: [{ id: '284411', note: 'متطلب سابق' }],
+          resources: {
+          notes: [
+            { title: ' الكتاب والمانيوال ', url: 'https://drive.google.com/drive/folders/1AXi1TogmHAEA3apIp8sah3g1RA-7SDLM' },
+            { title: 'Suggested ', url: 'https://drive.google.com/drive/folders/1qe53s5BBPWksDOfZfzBWs3UhsZ77_dde' },
+            { title: 'شرح المهندس عبد الرحمن ', url: 'https://drive.google.com/drive/folders/1IL1d4i8ZuPdq3yOE_NiqppfXqwV33wHh' },
+            { title: 'تفاريغ اخرى', url: 'https://drive.google.com/drive/folders/1KUkR6RME2m6zNXdOD2fyJJZdwSYOF9Gj' },
+            { title: 'Appendx', url: 'https://drive.google.com/file/d/1Ty7DTG4ADzHz_Cow7txIa9guVdZ9MCN_/view?usp=drivesdk' }
+          ],
+            videos: [
+            { title: 'شرح حماد ', url: 'https://youtube.com/playlist?list=PLeMUwu88QUu0BiuRKV9oAMwF8bmfKE1Xq&si=XH5uQXZR7N5nSIna' }
+          ]
+        }
       },
+      
       { id: 'U_ELEC_1', name: 'متطلب جامعة اختياري', hours: 3, year: 3, term: 2, category: 'uni_elec', desc: 'مساق اختياري من المواد المتاحة في الجامعة.', prereqs: [], unlocks: [] },
 
       // YEAR 4 - TERM 1
@@ -949,6 +986,7 @@
         prereqs: [{ id: '283140', note: 'سابق دراسة' }], 
         unlocks: [{ id: '285110', note: 'سابق أو متزامن' }] 
       },
+      
       { 
         id: '284211', 
         name: 'معالجة الاشارات الرقمية', 
@@ -960,6 +998,7 @@
         prereqs: [{ id: '283212', note: 'سابق نجاح' }], 
         unlocks: [{ id: '284620', note: 'متطلب سابق' }] 
       },
+      
       { 
         id: '284310', 
         name: 'النمذجة الفسيولوجية وأنظمة التحكم', 
@@ -974,10 +1013,15 @@
         ], 
         unlocks: [{ id: '284330', note: 'سابق/متزامن' }] 
       },
-      { id: '284330', name: 'مختبر النمذجة الفسيولوجية وأنظمة التحكم', hours: 1, year: 4, term: 1, category: 'dept_req', desc: 'مختبر محاكاة الأنظمة الفسيولوجية باستخدام الماتلاب.', prereqs: [
+      
+      { id: '284330', name: 'مختبر النمذجة الفسيولوجية وأنظمة التحكم',
+       hours: 1, year: 4, term: 1, category: 'dept_req', 
+       desc: 'مختبر محاكاة الأنظمة الفسيولوجية باستخدام الماتلاب.',
+       prereqs: [
         { id: '282300', note: 'متطلب سابق' },
         { id: '284310', note: 'سابق/متزامن' }
       ], unlocks: [] },
+      
       { 
         id: '284411', 
         name: 'ظاهرة الانتقال الطبي الحيوي', 
@@ -991,7 +1035,46 @@
           { id: '283420', note: 'سابق نجاح' },
           { id: '283440', note: 'متطلب سابق' }
         ], 
-        unlocks: [] 
+        unlocks: [],
+         resources: {
+          notes: [
+            { title: ' الكتاب ', url: 'https://drive.google.com/file/d/1npgQNqo4z-HGqBpcLrsZvqaJT0BtLpUE/view?usp=drivesdk' },
+            { title: 'تفاريغ وشروحات ', url: 'https://drive.google.com/drive/folders/1_R2Jn2Ft7MgV3Fz-S51uxv9zzAIYkivp' },
+            { title: 'تفريغ المهندس نسيم', url: 'https://drive.google.com/drive/folders/1EF6XwZZ109i080tX_GecOqXeg9RPQ9Vy?usp=sharing' },
+            { title: 'تفريغ المهندسة أمامه النواصره', url: 'https://drive.google.com/folderview?id=11f6zcXxr_EhgJ0riL35wFeoh0DOu-Jtb' },
+            { title: 'دكتوره مها ', url: 'https://drive.google.com/drive/folders/1mYf07zGBIQwTDDfNo9FbbnT65Y_zatrV' },
+            { title: 'مادة الفيرست تفريغ أبرار', url: 'https://drive.google.com/file/d/1MS4F49ARCXOtu3RahKP5zYHO12Qepj-8/view' }
+          ],
+            videos: [
+            { title: 'Part 1 ', url: 'https://youtu.be/kJwKwaXdRRA' },
+            { title: 'Part 2', url: 'https://youtu.be/-HBCkHNEK5E' },
+            { title: 'Part 3', url: 'https://youtu.be/qxfJ-KpsHw8' },
+            { title: 'Part 3 (2)', url: 'https://youtu.be/erpJhyrMUVk' },
+            { title: 'Part 4 ', url: 'https://youtu.be/QT02COOQzHY' },
+            { title: 'Part 4 (2)', url: 'https://youtu.be/CfRc5Uz8vQw' },
+            { title: 'Part 5 ', url: 'https://youtu.be/hbVEqQjLG6k' },
+            { title: 'Part 6', url: 'https://youtu.be/NwcQdcEnXBo' },
+            { title: 'Part 7 ', url: 'https://youtu.be/DHSSlkcZ3mY' },
+            { title: 'Part 8 ', url: 'https://youtu.be/nXdHWQLYk_k' },
+            { title: 'Diffusion +convection  1', url: 'https://youtu.be/vTdfw80yHak' },
+            { title: 'Diffusion +convection  2', url: 'https://youtu.be/XZyqa5L5cGI' },
+            { title: 'Diffusion +convection  3', url: 'https://youtu.be/Z2jbh79fajc' },
+            { title: 'rheology ', url: 'https://youtu.be/Hre3rnTdQOk' },
+            { title: 'rheology 1 ', url: 'https://youtu.be/Hre3rnTdQOk' },
+            { title: 'rheology 2', url: 'https://youtu.be/Cbor9rzQKIk' },
+            { title: 'rheology 3', url: 'https://youtu.be/i59C7DPITqQ' },
+            { title: 'FDM', url: 'https://youtu.be/LnNEp82vy6A' },
+            { title: 'Transvascular transport 1', url: 'https://youtu.be/PN7WnW1gsQY' },
+            { title: 'Transvascular transport 2', url: 'https://youtu.be/l7aKj8agtJ4' },
+            { title: 'Heat transfer ', url: 'https://youtu.be/xRP3vDBIw9M' },
+            { title: 'Equilibrium gases', url: 'https://youtu.be/twSvQikhraI' }
+          ],
+              exams: [
+            { title: 'سنوات فيرست ', url: 'https://drive.google.com/file/d/1NHX1bL7JObwfstN16EJTaacCAKfhc4pd/view?usp=drivesdk' },
+            { title: 'سنوات سكند ', url: 'https://drive.google.com/file/d/1Z0OQUWttB0mr2rBxuAMNfRk7IjdKJ9hW/view?usp=drivesdk' },
+            { title: ' سنوات فاينل ', url: 'https://drive.google.com/file/d/1dBMcSRo-UvW0huP5aM6mUmbT8i_fooG0/view?usp=drivesdk'},
+          ]
+        }
       },
 
        // YEAR 4 - TERM 2
